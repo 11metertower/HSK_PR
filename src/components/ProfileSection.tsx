@@ -34,7 +34,7 @@ export default function ProfileSection() {
       icon: Briefcase,
       label: "직장 / 소속",
       value: "삼성전자 DX 부문",
-      detail: "모바일·가전 테크 연구/개발 직무",
+      detail: "모바일 visual AI 연구/개발 직무",
     },
     {
       icon: MapPin,

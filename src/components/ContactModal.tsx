@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Share2, MessageCircle, Copy, Check, Users, Inbox } from "lucide-react";
+import { BASE_PATH } from "@/lib/constants";
 
 export default function ContactModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,10 +24,10 @@ export default function ContactModal() {
         localStorage.getItem("hsk_connect_responses") || "[]"
       );
       setSubmissions(data);
-      setShowSubmissions(true);
     } catch {
       setSubmissions([]);
     }
+    setShowSubmissions(true);
   };
 
   return (

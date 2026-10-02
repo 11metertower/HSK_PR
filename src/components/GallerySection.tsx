@@ -28,9 +28,10 @@ export default function GallerySection() {
     },
     {
       id: 2,
-      src: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80",
-      alt: "주말 카페 여유",
-      caption: "주말 오후, 좋아하는 드립 커피와 함께",
+      src: getAssetPath("/images/photo2.jpg"),
+      alt: "김현성 일상 사진",
+      caption: "소중한 순간의 한 장면",
+      isCustomPhoto: true,
     },
     {
       id: 3,

@@ -11,6 +11,8 @@ import {
   Coffee,
   Car,
   MessageCircle,
+  Loader2,
+  Mail,
 } from "lucide-react";
 
 export default function ConnectSection() {
@@ -18,8 +20,12 @@ export default function ConnectSection() {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+
+  const targetEmail =
+    process.env.NEXT_PUBLIC_NOTIFICATION_EMAIL || "dksgnsrb@gmail.com";
 
   const preferences = [
     {
@@ -42,35 +48,67 @@ export default function ConnectSection() {
     },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !contact.trim()) {
       alert("성함과 연락처를 입력해 주세요.");
       return;
     }
 
-    // Save to local storage for persistence
+    setIsSubmitting(true);
+
+    const prefTitle =
+      preferences.find((p) => p.id === preference)?.title || preference;
+
+    const payload = {
+      _subject: `[소개팅 PR] ${name.trim()} 님으로부터 새로운 마음이 도착했습니다!`,
+      _template: "table",
+      _captcha: "false",
+      이름_닉네임: name.trim(),
+      연락처: contact.trim(),
+      희망만남스타일: prefTitle,
+      전하는한마디: message.trim() || "(메시지 없음)",
+      제출일시: new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
+    };
+
+    // 1. Send Email Notification via FormSubmit AJAX API
+    try {
+      await fetch(`https://formsubmit.co/ajax/${targetEmail}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.warn("Email dispatch error:", err);
+    }
+
+    // 2. Client-side LocalStorage backup
     try {
       const existing = JSON.parse(
         localStorage.getItem("hsk_connect_responses") || "[]"
       );
-      const newResponse = {
-        id: Date.now(),
-        date: new Date().toLocaleString("ko-KR"),
-        name: name.trim(),
-        contact: contact.trim(),
-        preference,
-        message: message.trim(),
-      };
       localStorage.setItem(
         "hsk_connect_responses",
-        JSON.stringify([...existing, newResponse])
+        JSON.stringify([
+          {
+            id: Date.now(),
+            date: new Date().toLocaleString("ko-KR"),
+            name: name.trim(),
+            contact: contact.trim(),
+            preference: prefTitle,
+            message: message.trim(),
+          },
+          ...existing,
+        ])
       );
     } catch {
       // Local storage fallback
     }
 
-    // Fire joyful romantic confetti
+    // 3. Trigger romantic Confetti celebration
     try {
       confetti({
         particleCount: 70,
@@ -82,6 +120,7 @@ export default function ConnectSection() {
       // Confetti safety
     }
 
+    setIsSubmitting(false);
     setIsSubmitted(true);
   };
 
@@ -123,7 +162,7 @@ export default function ConnectSection() {
           onSubmit={handleSubmit}
           className="bg-white rounded-3xl p-6 border border-[#E8E2D8] shadow-sm space-y-5"
         >
-          {/* Preference Selection (Radio cards) */}
+          {/* Preference Selection */}
           <div>
             <label className="block text-xs font-serif font-medium text-[#2D2725] mb-2.5">
               선호하는 첫 만남 스타일
@@ -200,16 +239,26 @@ export default function ConnectSection() {
           {/* Privacy Security Note */}
           <div className="flex items-center gap-2 px-3 py-2 bg-[#FAF7F2] rounded-xl text-[11px] text-[#8C827A] font-serif border border-[#E8E2D8]/60">
             <Lock className="w-3.5 h-3.5 text-[#B88E72] shrink-0" />
-            <span>작성해주신 정보는 비공개로 안전하게 전달됩니다.</span>
+            <span>작성해주신 정보는 비공개로 현성 님에게 안전하게 전달됩니다.</span>
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3.5 bg-[#976F56] hover:bg-[#856049] text-white font-serif text-xs tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+            disabled={isSubmitting}
+            className="w-full py-3.5 bg-[#976F56] hover:bg-[#856049] disabled:bg-[#B88E72]/70 text-white font-serif text-xs tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
           >
-            <Heart className="w-3.5 h-3.5 fill-white" />
-            <span>마음 전달하기</span>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
+                <span>현성 님에게 전달 중...</span>
+              </>
+            ) : (
+              <>
+                <Heart className="w-3.5 h-3.5 fill-white" />
+                <span>마음 전달하기</span>
+              </>
+            )}
           </button>
         </form>
       ) : (
