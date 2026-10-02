@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: var(--font-serif), "Noto Serif KR", Georgia, serif;
+  --font-sans: var(--font-sans), "Noto Sans KR", system-ui, sans-serif;
+
+  --color-paper: #FAF7F2;
+  --color-paper-light: #FDFBF8;
+  --color-paper-card: #FFFFFF;
+  --color-paper-dark: #F0ECE4;
+  --color-ink: #2D2725;
+  --color-ink-muted: #7E756F;
+  --color-ink-subtle: #A39B94;
+  --color-rose-gold: #B88E72;
+  --color-rose-gold-dark: #976F56;
+  --color-rose-gold-light: #F7EFE9;
+  --color-line: #E8E2D8;
+}
+
+:root {
+  --background: #F4EFEA;
+  --foreground: #2D2725;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* Custom scrollbar styling for delicate aesthetic */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8CEC4;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B88E72;
+}
+
+/* Paper grain texture effect */
+.paper-texture {
+  background-color: #FAF7F2;
+  background-image: radial-gradient(#E5DCD3 0.75px, transparent 0.75px);
+  background-size: 16px 16px;
+}
+
+/* Elegant gold gradient */
+.gold-shimmer {
+  background: linear-gradient(135deg, #B88E72 0%, #D4A373 50%, #B88E72 100%);
+}
